@@ -298,12 +298,18 @@ public class TestMulticastSocketFromFactory extends BaseTestCase {
             }
         }
         
-        for( int i=0; i < numConsumers ; ++i ) {
-            assertTrue( consumers[i].getIn() > totalConsume / 2 );
-        }
-        
         for( int i=0; i < numProducers ; ++i ) {
-            assertTrue( producers[i].getOut() > sendPerProducer / 2 );
+            int num = producers[i].getOut();
+            assertTrue(String.valueOf( i ) + " " + String.valueOf(num),
+                       num > sendPerProducer / 2 );
+        }
+
+        for( int i=0; i < numConsumers ; ++i ) {
+            int num = consumers[i].getIn();
+            // this can be fixed by
+            // http://stackoverflow.com/questions/18747134/getting-cant-assign-requested-address-java-net-socketexception-using-ehcache
+            // Start the JVM with -Djava.net.preferIPv4Stack=true.
+            assertTrue(String.valueOf( i ) + " " + String.valueOf(num), num > totalConsume / 2 );
         }
     }
 }
