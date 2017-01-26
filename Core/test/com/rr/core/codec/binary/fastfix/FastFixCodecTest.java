@@ -796,26 +796,33 @@ public class FastFixCodecTest extends BaseTestCase {
 
     public void testInsertByte() {
         _encoder.clear();
-        _encoder.encodeString( "ABCDEFGHIJ".getBytes(), 0, 10 );
+        String s1 = "ABCDEFGHIJ";
+        byte[] b = s1.getBytes();
+        
+        _encoder.encodeString( b, 0, 10 );
         _encoder.insertByte( 2 );
-        assertEquals( "AB\000CDEFGHI\312", new String(_encoder.getBuffer(), 0, _encoder.getCurLength() ) );
-    }
+        String s = new String( _encoder.getBuffer(), 0, _encoder.getCurLength()-1 );
+        System.out.println( "len " +  _encoder.getCurLength() + " " + s);
+        
+      assertEquals( "AB\0CDEFGHI", s);    }
     
     public void testInsertBytes() {
+        // encoder do _buffer[_idx-1] |= FastFixUtils.STOP_BIT;
+
         _encoder.clear();
         _encoder.encodeString( "ABCDEFGHIJ".getBytes(), 0, 10 );
         _encoder.insertBytes( 2, 1 );
-        assertEquals( "AB\000CDEFGHI\312", new String(_encoder.getBuffer(), 0, _encoder.getCurLength() ) );
+        assertEquals( "AB\000CDEFGHI", new String(_encoder.getBuffer(), 0, _encoder.getCurLength()-1 ) );
 
         _encoder.clear();
         _encoder.encodeString( "ABCDEFGHIJ".getBytes(), 0, 10 );
         _encoder.insertBytes( 2, 3 );
-        assertEquals( "AB\000\000\000CDEFGHI\312", new String(_encoder.getBuffer(), 0, _encoder.getCurLength() ) );
+        assertEquals( "AB\000\000\000CDEFGHI", new String(_encoder.getBuffer(), 0, _encoder.getCurLength()-1 ) );
         _encoder.clear();
 
         _encoder.encodeString( "ABCDEFGHIJ".getBytes(), 0, 10 );
         _encoder.insertBytes( 0, 3 );
-        assertEquals( "\000\000\000ABCDEFGHI\312", new String(_encoder.getBuffer(), 0, _encoder.getCurLength() ) );
+        assertEquals( "\000\000\000ABCDEFGHI", new String(_encoder.getBuffer(), 0, _encoder.getCurLength()-1 ) );
     }
     
     private void doDecodeByte( byte cVal ) {
